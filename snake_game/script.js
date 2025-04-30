@@ -57,9 +57,19 @@ function checkSelfCollision() {
 }
 
 function spawnFood() {
-    food.x = Math.floor(Math.random() * (canvas.width / snakeSize)) * snakeSize;
-    food.y = Math.floor(Math.random() * (canvas.height / snakeSize)) * snakeSize;
+    let valid = false;
+    while (!valid) {
+        const x = Math.floor(Math.random() * (canvas.width / snakeSize)) * snakeSize;
+        const y = Math.floor(Math.random() * (canvas.height / snakeSize)) * snakeSize;
+
+        valid = !snake.some(segment => segment.x === x && segment.y === y);
+        if (valid) {
+            food.x = x;
+            food.y = y;
+        }
+    }
 }
+
 
 function drawFood() {
     ctx.fillStyle = "red";
