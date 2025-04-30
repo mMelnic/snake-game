@@ -10,9 +10,13 @@ let dx = snakeSize; // Horizontal movement
 let dy = 0; // Vertical movement
 
 const food = { x: 0, y: 0 };
+const powerUp = { x: 0, y: 0, type: "" };
 
 let gameSpeed = 100;
 let score = 0;
+let timeout;
+let powerUpInterval;
+let powerUpTimeout;
 
 function drawGameBoard() {
     ctx.fillStyle = "black";
@@ -77,6 +81,54 @@ function checkFoodCollision() {
     }
 }
 
+function spawnPowerUp() {
+    if (powerUp.type) return;
+    const types = ["food", "slow", "doublePoints"];
+    powerUp.x = Math.floor(Math.random() * (canvas.width / snakeSize)) * snakeSize;
+    powerUp.y = Math.floor(Math.random() * (canvas.height / snakeSize)) * snakeSize;
+    powerUp.type = types[Math.floor(Math.random() * types.length)];
+
+    clearTimeout(powerUpTimeout);
+    powerUpTimeout = setTimeout(() => {
+        powerUp.type = "";
+    }, 5000);
+}
+
+function drawPowerUp() {
+    if (!powerUp.type) return;
+    ctx.fillStyle = powerUp.type === "food" ? "blue" :
+                    powerUp.type === "slow" ? "yellow" :
+                    powerUp.type === "doublePoints" ? "purple" : "white";
+    
+    ctx.fillRect(powerUp.x, powerUp.y, snakeSize, snakeSize);
+}
+
+function startPowerUpSpawning() {
+    clearTimeout(timeout);
+    clearInterval(powerUpInterval);
+
+    timeout = setTimeout(() => {
+        spawnPowerUp();
+        powerUpInterval = setInterval(spawnPowerUp, 15000);
+    }, 15000);
+}
+
+function checkPowerUpCollision() {
+    const head = snake[0];
+
+    if (head.x === powerUp.x && head.y === powerUp.y) {
+        if (powerUp.type === "food") {
+            spawnFood();
+        } else if (powerUp.type === "slow") {
+            gameSpeed += 50;
+            setTimeout(() => gameSpeed -= 50, 5000);
+        } else if (powerUp.type === "doublePoints") {
+            score += 1;
+        }
+        powerUp.type = ""; // Reset power-up after collection
+    }
+}
+
 document.addEventListener("keydown", function(event) {
     event.preventDefault();
     if (event.key === "ArrowUp" && dy === 0) {
@@ -96,9 +148,11 @@ function gameLoop() {
     moveSnake();
     drawSnake();
     drawFood();
+    drawPowerUp();
     checkWallCollision();
     checkSelfCollision();
     checkFoodCollision();
+    checkPowerUpCollision();
     setTimeout(gameLoop, gameSpeed);
 }
 
@@ -108,8 +162,13 @@ function resetGame() {
     dx = snakeSize;
     dy = 0;
     score = 0;
+    gameSpeed = 100;
     document.getElementById("scoreDisplay").textContent = "Score: 0";
+    powerUp.type = "";
     spawnFood();
+    startPowerUpSpawning();
 }
 
+spawnFood();
+startPowerUpSpawning();
 gameLoop();
