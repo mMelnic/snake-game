@@ -17,6 +17,7 @@ let score = 0;
 let timeout;
 let powerUpInterval;
 let powerUpTimeout;
+let highScore = localStorage.getItem("highScore") || 0;
 
 function drawGameBoard() {
     ctx.fillStyle = "black";
@@ -69,7 +70,6 @@ function spawnFood() {
         }
     }
 }
-
 
 function drawFood() {
     ctx.fillStyle = "red";
@@ -139,6 +139,13 @@ function checkPowerUpCollision() {
     }
 }
 
+function updateHighScore() {
+    if (score > highScore) {
+        highScore = score;
+        localStorage.setItem("highScore", highScore);
+    }
+}
+
 document.addEventListener("keydown", function(event) {
     event.preventDefault();
     if (event.key === "ArrowUp" && dy === 0) {
@@ -155,6 +162,7 @@ document.addEventListener("keydown", function(event) {
 function gameLoop() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawGameBoard();
+    document.getElementById("highScoreDisplay").textContent = "High Score: " + highScore;
     moveSnake();
     drawSnake();
     drawFood();
@@ -167,6 +175,8 @@ function gameLoop() {
 }
 
 function resetGame() {
+    updateHighScore();
+
     snake.length = 1;
     snake[0] = { x: 200, y: 200 };
     dx = snakeSize;
@@ -174,7 +184,9 @@ function resetGame() {
     score = 0;
     gameSpeed = 100;
     document.getElementById("scoreDisplay").textContent = "Score: 0";
+    document.getElementById("highScoreDisplay").textContent = "High Score: " + highScore;
     powerUp.type = "";
+
     spawnFood();
     startPowerUpSpawning();
 }

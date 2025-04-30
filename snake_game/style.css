@@ -36,7 +36,10 @@ canvas {
     right: -250px;
 }
 
-#scoreDisplay {
+#scoreBoard {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
     font-size: 18px;
     color: white;
     margin-bottom: 10px;
