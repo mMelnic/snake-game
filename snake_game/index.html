@@ -10,18 +10,27 @@
 
 <body>
     <div id="scoreDisplay">Score: 0</div>
-        <div id="gameContainer">
-            <canvas id="gameCanvas"></canvas>
-            <div id="legend">
-                <h2>Power-ups:</h2>
-                <ul>
-                    <li><span class="power food"></span> <strong>Food Respawn</strong> - Instantly spawns a new food.</li>
-                    <li><span class="power slow"></span> <strong>Slow Down</strong> - Temporarily slows the snake speed.</li>
-                    <li><span class="power doublePoints"></span> <strong>Double Points</strong> - Gives extra points on the next
-                        food.</li>
-                </ul>
+    <div id="gameContainer">
+        <canvas id="gameCanvas"></canvas>
+        <div id="legend">
+            <h2>Power-ups:</h2>
+            <div class="legend-item">
+                <span class="power food"></span>
+                <div class="legend-title">Food Respawn</div>
+                <div class="legend-description">Instantly spawns a new food.</div>
+            </div>
+            <div class="legend-item">
+                <span class="power slow"></span>
+                <div class="legend-title">Slow Down</div>
+                <div class="legend-description">Temporarily slows the snake speed.</div>
+            </div>
+            <div class="legend-item">
+                <span class="power doublePoints"></span>
+                <div class="legend-title">Double Points</div>
+                <div class="legend-description">Gives extra points on the next food.</div>
             </div>
         </div>
+    </div>
     <script src="script.js"></script>
 </body>
 
