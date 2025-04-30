@@ -11,6 +11,9 @@ let dy = 0; // Vertical movement
 
 const food = { x: 0, y: 0 };
 
+let gameSpeed = 100;
+let score = 0;
+
 function drawGameBoard() {
     ctx.fillStyle = "black";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -65,10 +68,17 @@ function checkFoodCollision() {
     if (head.x === food.x && head.y === food.y) {
         snake.push({});
         spawnFood();
+        score += 1;
+        document.getElementById("scoreDisplay").textContent = "Score: " + score;
+
+        if (gameSpeed > 50) {
+            gameSpeed -= 5; 
+        }
     }
 }
 
 document.addEventListener("keydown", function(event) {
+    event.preventDefault();
     if (event.key === "ArrowUp" && dy === 0) {
         dx = 0; dy = -snakeSize;
     } else if (event.key === "ArrowDown" && dy === 0) {
@@ -89,7 +99,7 @@ function gameLoop() {
     checkWallCollision();
     checkSelfCollision();
     checkFoodCollision();
-    setTimeout(gameLoop, 100);
+    setTimeout(gameLoop, gameSpeed);
 }
 
 function resetGame() {
@@ -97,6 +107,8 @@ function resetGame() {
     snake[0] = { x: 200, y: 200 };
     dx = snakeSize;
     dy = 0;
+    score = 0;
+    document.getElementById("scoreDisplay").textContent = "Score: 0";
     spawnFood();
 }
 
