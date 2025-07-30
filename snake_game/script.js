@@ -13,6 +13,9 @@ const food = { x: 0, y: 0 };
 const powerUp = { x: 0, y: 0, type: "" };
 
 let isPaused = false;
+let powerUpRemainingTime = 0;
+let powerUpStartTime = 0;
+let pauseStartTime = 0;
 let gameSpeed = 100;
 let score = 0;
 let timeout;
@@ -100,9 +103,13 @@ function spawnPowerUp() {
     powerUp.type = types[Math.floor(Math.random() * types.length)];
 
     clearTimeout(powerUpTimeout);
+    powerUpStartTime = Date.now();
+    powerUpRemainingTime = 5000;
+
+    clearTimeout(powerUpTimeout);
     powerUpTimeout = setTimeout(() => {
         powerUp.type = "";
-    }, 5000);
+    }, powerUpRemainingTime);
 }
 
 function drawPowerUp() {
@@ -152,6 +159,21 @@ document.addEventListener("keydown", function(event) {
 
     if (event.code === "Space") {
         isPaused = !isPaused;
+
+        if (isPaused) {
+            pauseStartTime = Date.now();
+            clearInterval(powerUpInterval); // Pause future spawning
+            clearTimeout(powerUpTimeout);// Pause expiration
+            powerUpRemainingTime -= Date.now() - powerUpStartTime; 
+        } else {
+            if (powerUp.type && powerUpRemainingTime > 0) {
+                powerUpStartTime = Date.now();
+                powerUpTimeout = setTimeout(() => {
+                    powerUp.type = "";
+                }, powerUpRemainingTime);
+            }
+            powerUpInterval = setInterval(spawnPowerUp, 15000);
+        }
         return;
     }
 
