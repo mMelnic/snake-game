@@ -12,6 +12,7 @@ let dy = 0; // Vertical movement
 const food = { x: 0, y: 0 };
 const powerUp = { x: 0, y: 0, type: "" };
 
+let isPaused = false;
 let gameSpeed = 100;
 let score = 0;
 let timeout;
@@ -148,18 +149,30 @@ function updateHighScore() {
 
 document.addEventListener("keydown", function(event) {
     event.preventDefault();
-    if (event.key === "ArrowUp" && dy === 0) {
-        dx = 0; dy = -snakeSize;
-    } else if (event.key === "ArrowDown" && dy === 0) {
-        dx = 0; dy = snakeSize;
-    } else if (event.key === "ArrowLeft" && dx === 0) {
-        dx = -snakeSize; dy = 0;
-    } else if (event.key === "ArrowRight" && dx === 0) {
-        dx = snakeSize; dy = 0;
+
+    if (event.code === "Space") {
+        isPaused = !isPaused;
+        return;
+    }
+
+    if (!isPaused) {
+        if (event.key === "ArrowUp" && dy === 0) {
+            dx = 0; dy = -snakeSize;
+        } else if (event.key === "ArrowDown" && dy === 0) {
+            dx = 0; dy = snakeSize;
+        } else if (event.key === "ArrowLeft" && dx === 0) {
+            dx = -snakeSize; dy = 0;
+        } else if (event.key === "ArrowRight" && dx === 0) {
+            dx = snakeSize; dy = 0;
+        }
     }
 });
 
 function gameLoop() {
+    if (isPaused) {
+        setTimeout(gameLoop, gameSpeed);
+        return;
+    }
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawGameBoard();
     document.getElementById("highScoreDisplay").textContent = "High Score: " + highScore;
